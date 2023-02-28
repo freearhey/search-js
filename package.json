@@ -12,12 +12,12 @@
   ],
   "author": "Arhey",
   "license": "MIT",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/freearhey/search-js.git"
+    "url": "git+https://github.com/freearhey/search-js.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "engines": {
     "node": ">=16.0.0"
