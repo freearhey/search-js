@@ -21,7 +21,7 @@ class SearchIndex {
           let isMore = item._searchable[f.field] > parseFloat(f.value.replace('>', ''))
           results.push(isMore)
         } else {
-          const regex = new RegExp(f.value.replaceAll(',', '|'), 'i')
+          const regex = new RegExp(f.value.replace(/,/g, '|'), 'i')
           const result = regex.test(item._searchable[f.field])
           results.push(result)
         }
