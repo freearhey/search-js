@@ -1,0 +1,37 @@
+{
+  "name": "@freearhey/search-js",
+  "version": "0.1.0",
+  "description": "A tool for searching elements in JavaScript arrays",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "npx eslint ./src/**/*.js",
+    "test": "npx jest"
+  },
+  "keywords": ["search"],
+  "author": "Arhey",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/freearhey/search-js.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@babel/preset-env": "latest",
+    "babel-jest": "latest",
+    "eslint": "latest",
+    "jest": "latest"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "bugs": {
+    "url": "https://github.com/freearhey/search-js/issues"
+  },
+  "homepage": "https://github.com/freearhey/search-js#readme"
+}
