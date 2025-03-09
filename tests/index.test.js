@@ -2,9 +2,21 @@ const sj = require('../src/index.js')
 
 let data = [
   { firstName: 'Nikhitha', lastName: 'Baneree', age: 24, passphrase: 'car plane' },
-  { firstName: 'Jeremy', lastName: 'Taylor', age: 13, passphrase: 'road main' },
-  { firstName: 'Jerry', lastName: 'Onkovich', age: 18, passphrase: 'carpool fan' },
-  { firstName: 'Gwendolyn', lastName: 'Kennedy', age: 43, passphrase: 'audio tank' }
+  { firstName: 'Jeremy', lastName: 'Taylor', age: 13, passphrase: 'road main', url: '' },
+  {
+    firstName: 'Jerry',
+    lastName: 'Onkovich',
+    age: 18,
+    passphrase: 'carpool fan',
+    url: 'http://google.com'
+  },
+  {
+    firstName: 'Gwendolyn',
+    lastName: 'Kennedy',
+    age: 43,
+    passphrase: 'audio tank',
+    url: 'http://test.com?hash=abc'
+  }
 ]
 
 it('can find items', () => {
@@ -21,6 +33,11 @@ it('can find items', () => {
   expect(index.search('ch,kh')).toMatchObject([data[0], data[2]])
   expect(index.search('car p')).toMatchObject([data[0], data[2]])
   expect(index.search('"car p"')).toMatchObject([data[0]])
+  expect(index.search('http://test.com?hash=abc')).toMatchObject([data[3]])
+  expect(index.search('url:http://test.com?hash=abc')).toMatchObject([data[3]])
+  expect(index.search('firstName:^n')).toMatchObject([data[0]])
+  expect(index.search('url:^$')).toMatchObject([data[1]])
+  expect(index.search('url:.')).toMatchObject([data[2], data[3]])
 })
 
 it('can find items when options.searchable is specified', () => {
