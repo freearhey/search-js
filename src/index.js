@@ -3,11 +3,22 @@ const _ = require('lodash')
 class SearchIndex {
   constructor(items = [], options = {}) {
     this.searchableAttributes = options.searchable
-    this.items = items.map(data => prepareData(data, options.searchable))
+    this.items = []
+
+    let _fields = {}
+    items.forEach(data => {
+      for (let key in data) {
+        _fields[key] = true
+      }
+
+      this.items.push(prepareData(data, options.searchable))
+    })
+
+    this.fields = Object.keys(_fields)
   }
 
   search(query) {
-    let filters = parseQuery(query)
+    let filters = parseQuery(query, this.fields, this.searchable)
 
     let hits = this.items.filter(item => {
       let results = []
@@ -20,10 +31,13 @@ class SearchIndex {
         } else if (f.value.startsWith('>')) {
           let isMore = item._searchable[f.field] > parseFloat(f.value.replace('>', ''))
           results.push(isMore)
-        } else {
+        } else if (Object.hasOwn(item._searchable, f.field)) {
           const regex = new RegExp(f.value.replace(/,/g, '|'), 'i')
-          const result = regex.test(item._searchable[f.field])
+          const value = item._searchable[f.field]
+          const result = regex.test(value)
           results.push(result)
+        } else {
+          results.push(false)
         }
       }
 
@@ -43,9 +57,8 @@ function prepareData(rawData, searchableAttributes = []) {
   for (let key in rawData) {
     let value = rawData[key]
     if (searchableAttributes.length && !searchableAttributes.includes(key)) continue
-    if (value === undefined || value === null) {
-      data._searchable[key] = ''
-    } else if (Array.isArray(value)) {
+    if (value === undefined || value === null) continue
+    else if (Array.isArray(value)) {
       data._searchable[key] = value.map(el => el.toString().toLowerCase()).join(',')
     } else if (_.isNumber(value)) {
       data._searchable[key] = value
@@ -72,7 +85,7 @@ function generateKey(data, searchableAttributes = []) {
   )
 }
 
-function parseQuery(query) {
+function parseQuery(query, fields = [], searchable = []) {
   if (!query) return []
 
   const parts = query.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g) || []
@@ -80,11 +93,13 @@ function parseQuery(query) {
   for (let value of parts) {
     let field = '_'
     if (value.includes(':')) {
-      let parts = value.split(':')
-      field = parts[0]
-      value = parts[1]
+      let parts = value.split(/:(.*)/s)
+      if (searchable.includes(parts[0]) || fields.includes(parts[0])) {
+        field = parts[0]
+        value = parts[1]
+      }
     }
-    value = value.replace(/"/g, '').toLowerCase()
+    value = value.replace(/"/g, '').replace(/\?/g, '\\?').toLowerCase()
 
     if (field && value) {
       filters.push({ field, value })
