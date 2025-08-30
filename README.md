@@ -44,7 +44,7 @@ Output:
 | cat dog             | Finds items that have "cat" AND "dog" in their descriptions |
 | cat,dog             | Finds items that have "cat" OR "dog" in their descriptions  |
 | bio:"electric tape" | Finds items that have "electric tape" in the bio            |
-| email:.             | Finds items that have an email                              |
+| email:/./           | Finds items that have an email                              |
 | stars:>4            | Finds items with more than 5 stars                          |
 | stars:<2            | Finds items with less than 2 stars                          |
 
