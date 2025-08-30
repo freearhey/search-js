@@ -1,6 +1,6 @@
 {
   "name": "@freearhey/search-js",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A tool for searching elements in JavaScript arrays",
   "main": "src/index.js",
   "scripts": {
