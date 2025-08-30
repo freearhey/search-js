@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 class SearchIndex {
   constructor(items = [], options = {}) {
-    this.searchableAttributes = options.searchable
+    this.searchable = options.searchable
     this.items = []
 
     let _fields = {}
@@ -24,6 +24,7 @@ class SearchIndex {
       let results = []
       for (let f of filters) {
         if (!f.value) return false
+        if (!Object.hasOwn(item._searchable, f.field)) return false
 
         if (f.value.startsWith('<')) {
           let isLess = item._searchable[f.field] < parseFloat(f.value.replace('<', ''))
@@ -31,13 +32,16 @@ class SearchIndex {
         } else if (f.value.startsWith('>')) {
           let isMore = item._searchable[f.field] > parseFloat(f.value.replace('>', ''))
           results.push(isMore)
-        } else if (Object.hasOwn(item._searchable, f.field)) {
-          const regex = new RegExp(f.value.replace(/,/g, '|'), 'i')
+        } else if (f.value.startsWith('/') && f.value.endsWith('/')) {
+          const regex = new RegExp(f.value.replace(/^\//, '').replace(/\/$/, ''), 'i')
           const value = item._searchable[f.field]
           const result = regex.test(value)
           results.push(result)
         } else {
-          results.push(false)
+          const regex = new RegExp(escapeRegExp(f.value).replace(',', '|'), 'i')
+          const value = item._searchable[f.field]
+          const result = regex.test(value)
+          results.push(result)
         }
       }
 
@@ -59,15 +63,19 @@ function prepareData(rawData, searchableAttributes = []) {
     if (searchableAttributes.length && !searchableAttributes.includes(key)) continue
     if (value === undefined || value === null) continue
     else if (Array.isArray(value)) {
-      data._searchable[key] = value.map(el => el.toString().toLowerCase()).join(',')
+      data._searchable[key] = value.map(el => normalize(el)).join(',')
     } else if (_.isNumber(value)) {
       data._searchable[key] = value
     } else {
-      data._searchable[key] = value.toString().toLowerCase()
+      data._searchable[key] = normalize(value)
     }
   }
 
   return data
+}
+
+function normalize(string) {
+  return string.toString().trim().toLowerCase()
 }
 
 function generateKey(data, searchableAttributes = []) {
@@ -77,10 +85,9 @@ function generateKey(data, searchableAttributes = []) {
   return (
     '|' +
     values
-      .map(v => v || '')
+      .map(v => (v ? normalize(v) : ''))
       .filter(v => v)
-      .join('|')
-      .toLowerCase() +
+      .join('|') +
     '|'
   )
 }
@@ -99,7 +106,7 @@ function parseQuery(query, fields = [], searchable = []) {
         value = parts[1]
       }
     }
-    value = value.replace(/"/g, '').replace(/\?/g, '\\?').toLowerCase()
+    value = value.replace(/"/g, '').toLowerCase()
 
     if (field && value) {
       filters.push({ field, value })
@@ -111,6 +118,10 @@ function parseQuery(query, fields = [], searchable = []) {
 
 function createIndex(items, options) {
   return new SearchIndex(items, options)
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 module.exports = {
