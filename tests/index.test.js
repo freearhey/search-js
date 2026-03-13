@@ -1,8 +1,8 @@
 const sj = require('../src/index.js')
 
 let data = [
-  { firstName: 'Nikhitha', lastName: 'Baneree', age: 24, passphrase: 'car plane' },
-  { firstName: 'Jeremy', lastName: 'Taylor', age: 13, passphrase: 'road main', url: '' },
+  { firstName: 'Nikhitha', lastName: 'Baneree', age: 24, passphrase: 'car plane', url: undefined },
+  { firstName: 'Jeremy', lastName: 'Taylor', age: 13, passphrase: 'road main', url: '', education: [undefined] },
   {
     firstName: 'Jerry',
     lastName: 'Onkovich',
