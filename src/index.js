@@ -75,7 +75,7 @@ function prepareData(rawData, searchableAttributes = []) {
 }
 
 function normalize(string) {
-  if(string === undefined) return ''
+  if (string === undefined) return ''
 
   return string.toString().trim().toLowerCase()
 }
@@ -102,7 +102,7 @@ function parseQuery(query, fields = [], searchable = []) {
   for (let value of parts) {
     let field = '_'
     if (value.includes(':')) {
-      let parts = value.split(/:(.*)/s)
+      let parts = value.split(/:(.*)/g)
       if (searchable.includes(parts[0]) || fields.includes(parts[0])) {
         field = parts[0]
         value = parts[1]
