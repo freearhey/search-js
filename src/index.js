@@ -75,6 +75,8 @@ function prepareData(rawData, searchableAttributes = []) {
 }
 
 function normalize(string) {
+  if(string === undefined) return ''
+
   return string.toString().trim().toLowerCase()
 }
 
